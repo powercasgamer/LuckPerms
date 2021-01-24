@@ -349,38 +349,6 @@ public interface Message {
             .append(text(msg, GRAY))
     );
 
-    Args2<String, String> MIGRATION_LOG = (pluginName, msg) -> prefixed(text()
-            // "&3MIGRATION &7[&3{}&7] &3&l> &f{}"
-            .append(translatable("luckperms.logs.migration-prefix", DARK_AQUA))
-            .append(space())
-            .append(text()
-                    .color(GRAY)
-                    .append(text('['))
-                    .append(text(pluginName, DARK_AQUA))
-                    .append(text(']'))
-            )
-            .append(space())
-            .append(text('>', DARK_AQUA, BOLD))
-            .append(space())
-            .append(text(msg, WHITE))
-    );
-
-    Args2<String, String> MIGRATION_LOG_PROGRESS = (pluginName, msg) -> prefixed(text()
-            // "&3MIGRATION &7[&3{}&7] &3&l> &7{}"
-            .append(translatable("luckperms.logs.migration-prefix", DARK_AQUA))
-            .append(space())
-            .append(text()
-                    .color(GRAY)
-                    .append(text('['))
-                    .append(text(pluginName, DARK_AQUA))
-                    .append(text(']'))
-            )
-            .append(space())
-            .append(text('>', DARK_AQUA, BOLD))
-            .append(space())
-            .append(text(msg, GRAY))
-    );
-
     Args0 COMMAND_NOT_RECOGNISED = () -> prefixed(translatable()
             // "&cCommand not recognised."
             .key("luckperms.commandsystem.command-not-recognised")
@@ -584,6 +552,22 @@ public interface Message {
             .key("luckperms.command.verbose.command-exec-complete")
             .color(AQUA)
             .append(FULL_STOP)
+    );
+
+    Args0 VERBOSE_OFF_COMMAND_NO_CHECKS = () -> join(newline(),
+            // &bThe command execution completed, but no permission checks were made.
+            // &7This might be because the plugin runs commands in the background (async). You can still use verbose manually to detect checks made like this.
+            prefixed(translatable()
+                    .key("luckperms.command.verbose.command.no-checks")
+                    .color(AQUA)
+                    .append(FULL_STOP)),
+            prefixed(text()
+                    .color(GRAY)
+                    .append(translatable("luckperms.command.verbose.command.possibly-async"))
+                    .append(FULL_STOP)
+                    .append(space())
+                    .append(translatable("luckperms.command.verbose.command.try-again-manually"))
+                    .append(FULL_STOP))
     );
 
     Args0 VERBOSE_RECORDING_ON = () -> prefixed(translatable()
@@ -1058,18 +1042,6 @@ public interface Message {
             .append(space())
             .append(translatable("luckperms.command.misc.check-console-for-errors"))
             .append(FULL_STOP)
-    );
-
-    Args3<User, String, Tristate> CHECK_RESULT = (user, permission, result) -> prefixed(translatable()
-            // "&aPermission check result on user &b{}&a for permission &b{}&a: &f{}"
-            .color(GREEN)
-            .key("luckperms.command.check.result")
-            .args(
-                    text().color(AQUA).append(user.getFormattedDisplayName()),
-                    text(permission, AQUA)
-            )
-            .append(text(": "))
-            .append(formatTristate(result))
     );
 
     Args1<Component> CREATE_SUCCESS = name -> prefixed(translatable()
@@ -1743,39 +1715,127 @@ public interface Message {
             .append(FULL_STOP)
     );
 
-    Args4<PermissionHolder, String, Tristate, ContextSet> CHECK_PERMISSION = (holder, permission, value, context) -> prefixed(translatable()
-            // "&b{}&a has permission &b{}&a set to {}&a in context {}&a."
-            .key("luckperms.command.generic.permission.check-inherits")
+    Args1<String> PERMISSION_CHECK_INFO_HEADER = permission -> prefixed(translatable()
+            // &aPermission information for &b{}&a:
+            .key("luckperms.command.generic.permission.check.info.title")
             .color(GREEN)
-            .args(
-                    text().color(AQUA).append(holder.getFormattedDisplayName()),
-                    text(permission, AQUA),
-                    formatTristate(value),
-                    formatContextSet(context)
-            )
-            .append(FULL_STOP)
+            .args(text(permission, AQUA))
+            .append(text(':'))
     );
 
-    Args5<PermissionHolder, String, Tristate, ContextSet, String> CHECK_INHERITS_PERMISSION = (holder, permission, value, context, inheritedFrom) -> prefixed(translatable()
-            // "&b{}&a has permission &b{}&a set to {}&a in context {}&a. &7(inherited from &a{}&7)"
-            .key("luckperms.command.generic.permission.check-inherits")
-            .color(GREEN)
-            .args(
-                    text().color(AQUA).append(holder.getFormattedDisplayName()),
-                    text(permission, AQUA),
-                    formatTristate(value),
-                    formatContextSet(context)
-            )
-            .append(FULL_STOP)
+    Args4<PermissionHolder, String, Tristate, ContextSet> PERMISSION_CHECK_INFO_DIRECTLY = (holder, permission, value, context) -> prefixed(text()
+            // &f- &b{}&3 has &b{}&3 set to {}&3 in context {}&3.
+            .append(text('-', WHITE))
             .append(space())
-            .append(text()
+            .append(translatable()
+                    .key("luckperms.command.generic.permission.check.info.directly")
                     .color(GRAY)
-                    .append(OPEN_BRACKET)
-                    .append(translatable("luckperms.command.generic.info.inherited-from"))
-                    .append(space())
-                    .append(text(inheritedFrom, GREEN))
-                    .append(CLOSE_BRACKET)
+                    .args(
+                            text().color(AQUA).append(holder.getFormattedDisplayName()),
+                            text(permission, AQUA),
+                            formatTristate(value),
+                            formatContextSet(context)
+                    )
+                    .append(FULL_STOP)
             )
+    );
+
+
+    Args5<PermissionHolder, String, Tristate, ContextSet, String> PERMISSION_CHECK_INFO_INHERITED = (holder, permission, value, context, inheritedFrom) -> prefixed(text()
+            // &f- &b{}&3 inherits &b{}&3 set to {}&3 from &a{}&3 in context {}&3.
+            .append(text('-', WHITE))
+            .append(space())
+            .append(translatable()
+                    .key("luckperms.command.generic.permission.check.info.inherited")
+                    .color(GRAY)
+                    .args(
+                            text().color(AQUA).append(holder.getFormattedDisplayName()),
+                            text(permission, AQUA),
+                            formatTristate(value),
+                            text(inheritedFrom, GREEN),
+                            formatContextSet(context)
+                    )
+                    .append(FULL_STOP)
+            )
+    );
+
+    Args2<PermissionHolder, String> PERMISSION_CHECK_INFO_NOT_DIRECTLY = (holder, permission) -> prefixed(text()
+            // &f- &b{}&3 does not have &b{}&3 set.
+            .append(text('-', WHITE))
+            .append(space())
+            .append(translatable()
+                    .key("luckperms.command.generic.permission.check.info.not-directly")
+                    .color(GRAY)
+                    .args(
+                            text().color(AQUA).append(holder.getFormattedDisplayName()),
+                            text(permission, AQUA)
+                    )
+                    .append(FULL_STOP)
+            )
+    );
+
+    Args2<PermissionHolder, String> PERMISSION_CHECK_INFO_NOT_INHERITED = (holder, permission) -> prefixed(text()
+            // &f- &b{}&3 does not inherit &b{}&3.
+            .append(text('-', WHITE))
+            .append(space())
+            .append(translatable()
+                    .key("luckperms.command.generic.permission.check.info.not-inherited")
+                    .color(GRAY)
+                    .args(
+                            text().color(AQUA).append(holder.getFormattedDisplayName()),
+                            text(permission, AQUA)
+                    )
+                    .append(FULL_STOP)
+            )
+    );
+
+    Args5<String, Tristate, String, String, ContextSet> PERMISSION_CHECK_RESULT = (permission, result, processor, cause, context) -> join(newline(),
+            // &aPermission check for &b{}&a:
+            //     &3Result: {}
+            //     &3Processor: &f{}
+            //     &3Cause: &f{}
+            //     &3Context: {}
+            prefixed(translatable()
+                    .key("luckperms.command.generic.permission.check.result.title")
+                    .color(GREEN)
+                    .args(text(permission, AQUA))
+                    .append(text(':'))),
+            prefixed(text()
+                    .color(DARK_AQUA)
+                    .append(text("    "))
+                    .append(translatable("luckperms.command.generic.permission.check.result.result-key"))
+                    .append(text(": "))
+                    .append(formatTristate(result))),
+            prefixed(text()
+                    .color(DARK_AQUA)
+                    .append(text("    "))
+                    .append(translatable("luckperms.command.generic.permission.check.result.processor-key"))
+                    .append(text(": "))
+                    .apply(builder -> {
+                        if (processor == null) {
+                            builder.append(translatable("luckperms.command.misc.none", AQUA));
+                        } else {
+                            builder.append(text(processor, WHITE));
+                        }
+                    })),
+            prefixed(text()
+                    .color(DARK_AQUA)
+                    .append(text("    "))
+                    .append(translatable("luckperms.command.generic.permission.check.result.cause-key"))
+                    .append(text(": "))
+                    .apply(builder -> {
+                        if (cause == null) {
+                            builder.append(translatable("luckperms.command.misc.none", AQUA));
+                        } else {
+                            builder.append(text(cause, WHITE));
+                        }
+                    })),
+            prefixed(text()
+                    .color(DARK_AQUA)
+                    .append(text("    "))
+                    .append(translatable("luckperms.command.generic.permission.check.result.context-key"))
+                    .append(text(": "))
+                    .append(formatContextSetBracketed(context, translatable("luckperms.command.misc.none", AQUA))))
     );
 
     Args4<String, Boolean, PermissionHolder, ContextSet> SETPERMISSION_SUCCESS = (permission, value, holder, context) -> prefixed(translatable()
@@ -2026,7 +2086,7 @@ public interface Message {
 
     Args3<PermissionHolder, ContextSet, Integer> PARENT_CLEAR_SUCCESS = (holder, context, removeCount) -> prefixed(translatable()
             // "&b{}&a's parents were cleared in context {}&a. (&b{}&a nodes were removed.)"
-            .key("luckperms.command.generic.parent.clear-track")
+            .key("luckperms.command.generic.parent.clear")
             .color(GREEN)
             .args(
                     text().color(AQUA).append(holder.getFormattedDisplayName()),

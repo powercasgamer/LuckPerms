@@ -39,6 +39,8 @@ import net.luckperms.api.node.types.WeightNode;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.ApiStatus.NonExtendable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -97,6 +99,7 @@ import java.util.stream.Stream;
  *
  * <p>The core node state must be immutable in all implementations.</p>
  */
+@NonExtendable
 public interface Node {
 
     /**
@@ -151,7 +154,7 @@ public interface Node {
      *
      * @return a list of full nodes
      */
-    @NonNull Collection<String> resolveShorthand();
+    @NonNull @Unmodifiable Collection<String> resolveShorthand();
 
     /**
      * Gets if this node is assigned temporarily.

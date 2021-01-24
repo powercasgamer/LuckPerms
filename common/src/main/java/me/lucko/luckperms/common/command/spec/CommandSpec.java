@@ -62,10 +62,6 @@ public enum CommandSpec {
             arg("permission", true),
             arg("page", false)
     ),
-    CHECK("/%s check <user> <permission>",
-            arg("user", true),
-            arg("permission", true)
-    ),
     NETWORK_SYNC("/%s networksync"),
     IMPORT("/%s import <file>",
             arg("file", true),
@@ -86,7 +82,6 @@ public enum CommandSpec {
             arg("action value", false),
             arg("constraint...", false)
     ),
-    MIGRATION("/%s migration"),
     TRANSLATIONS("/%s translations",
             arg("install", false)
     ),
@@ -185,12 +180,7 @@ public enum CommandSpec {
             arg("context...", false)
     ),
     PERMISSION_CHECK(
-            arg("node", true),
-            arg("context...", false)
-    ),
-    PERMISSION_CHECK_INHERITS(
-            arg("node", true),
-            arg("context...", false)
+            arg("node", true)
     ),
     PERMISSION_CLEAR(
             arg("context...", false)
@@ -326,6 +316,7 @@ public enum CommandSpec {
     ),
 
     TRACK_INFO,
+    TRACK_EDITOR,
     TRACK_APPEND(
             arg("group", true)
     ),
@@ -413,18 +404,6 @@ public enum CommandSpec {
     ),
     SPONGE_OPTION_CLEAR(
             arg("contexts...", false)
-    ),
-
-    MIGRATION_COMMAND,
-    MIGRATION_GROUPMANAGER(
-            arg("migrate as global", true)
-    ),
-    MIGRATION_POWERFULPERMS(
-            arg("address", true),
-            arg("database", true),
-            arg("username", true),
-            arg("password", true),
-            arg("db table", true)
     );
 
     private final String usage;

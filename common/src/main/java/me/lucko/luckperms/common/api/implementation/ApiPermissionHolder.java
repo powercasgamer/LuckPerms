@@ -123,7 +123,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
     }
 
     @Override
-    public @NonNull <T extends Node> Collection<T> getNodes(@NonNull NodeType<T> type) {
+    public <T extends Node> @NonNull Collection<T> getNodes(@NonNull NodeType<T> type) {
         Objects.requireNonNull(type, "type");
         return this.handle.getOwnNodes(type, QueryOptionsImpl.DEFAULT_NON_CONTEXTUAL);
     }
@@ -140,7 +140,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
     }
 
     @Override
-    public @NonNull <T extends Node> Collection<T> resolveInheritedNodes(@NonNull NodeType<T> type, @NonNull QueryOptions queryOptions) {
+    public <T extends Node> @NonNull Collection<T> resolveInheritedNodes(@NonNull NodeType<T> type, @NonNull QueryOptions queryOptions) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(queryOptions, "queryOptions");
         return this.handle.resolveInheritedNodes(type, queryOptions);
@@ -222,7 +222,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
 
         @Override
         public void clear() {
-            if (ApiPermissionHolder.this.handle.clearNodes(this.dataType, null, true)) {
+            if (ApiPermissionHolder.this.handle.clearNodes(this.dataType, null, false)) {
                 onNodeChange();
             }
         }
@@ -230,7 +230,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
         @Override
         public void clear(@NonNull Predicate<? super Node> test) {
             Objects.requireNonNull(test, "test");
-            if (ApiPermissionHolder.this.handle.removeIf(this.dataType, null, test, true)) {
+            if (ApiPermissionHolder.this.handle.removeIf(this.dataType, null, test, false)) {
                 onNodeChange();
             }
         }
@@ -239,7 +239,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
         @Override
         public void clear(@NonNull ContextSet contextSet) {
             Objects.requireNonNull(contextSet, "contextSet");
-            if (ApiPermissionHolder.this.handle.clearNodes(this.dataType, contextSet, true)) {
+            if (ApiPermissionHolder.this.handle.clearNodes(this.dataType, contextSet, false)) {
                 onNodeChange();
             }
         }
@@ -248,7 +248,7 @@ public class ApiPermissionHolder implements net.luckperms.api.model.PermissionHo
         public void clear(@NonNull ContextSet contextSet, @NonNull Predicate<? super Node> test) {
             Objects.requireNonNull(contextSet, "contextSet");
             Objects.requireNonNull(test, "test");
-            if (ApiPermissionHolder.this.handle.removeIf(this.dataType, contextSet, test, true)) {
+            if (ApiPermissionHolder.this.handle.removeIf(this.dataType, contextSet, test, false)) {
                 onNodeChange();
             }
         }

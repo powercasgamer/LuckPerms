@@ -25,9 +25,35 @@
 
 package net.luckperms.api.event.node;
 
+import net.luckperms.api.event.util.Param;
+import net.luckperms.api.node.Node;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Called when a holder has their nodes cleared
  */
 public interface NodeClearEvent extends NodeMutateEvent {
 
+    /**
+     * Gets the nodes that were cleared
+     *
+     * @return the nodes that were removed
+     * @since 5.3
+     */
+    @Param(3)
+    @NonNull @Unmodifiable Set<Node> getNodes();
+
+    @Override
+    default @NonNull @Unmodifiable Set<Node> getDataBefore() {
+        // Get data after, then reverse the action
+        Set<Node> nodes = new HashSet<>(this.getDataAfter());
+        nodes.addAll(this.getNodes());
+        return Collections.unmodifiableSet(nodes);
+    }
 }

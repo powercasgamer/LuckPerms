@@ -29,6 +29,11 @@ import net.luckperms.api.event.util.Param;
 import net.luckperms.api.node.Node;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Called when a node is removed from a holder
@@ -40,7 +45,15 @@ public interface NodeRemoveEvent extends NodeMutateEvent {
      *
      * @return the node that was removed
      */
-    @Param(4)
+    @Param(3)
     @NonNull Node getNode();
+
+    @Override
+    default @NonNull @Unmodifiable Set<Node> getDataBefore() {
+        // Get data after, then reverse the action
+        Set<Node> nodes = new HashSet<>(this.getDataAfter());
+        nodes.add(this.getNode());
+        return Collections.unmodifiableSet(nodes);
+    }
 
 }

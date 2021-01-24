@@ -32,7 +32,7 @@ import me.lucko.luckperms.bukkit.context.BukkitContextManager;
 import me.lucko.luckperms.common.cacheddata.CacheMetadata;
 import me.lucko.luckperms.common.calculator.CalculatorFactory;
 import me.lucko.luckperms.common.calculator.PermissionCalculator;
-import me.lucko.luckperms.common.calculator.processor.MapProcessor;
+import me.lucko.luckperms.common.calculator.processor.DirectProcessor;
 import me.lucko.luckperms.common.calculator.processor.PermissionProcessor;
 import me.lucko.luckperms.common.calculator.processor.RegexProcessor;
 import me.lucko.luckperms.common.calculator.processor.SpongeWildcardProcessor;
@@ -45,21 +45,15 @@ import net.luckperms.api.query.QueryOptions;
 public class BukkitCalculatorFactory implements CalculatorFactory {
     private final LPBukkitPlugin plugin;
 
-    private final DefaultsProcessor opDefaultsProcessor;
-    private final DefaultsProcessor nonOpDefaultsProcessor;
-
     public BukkitCalculatorFactory(LPBukkitPlugin plugin) {
         this.plugin = plugin;
-
-        this.opDefaultsProcessor = new DefaultsProcessor(this.plugin, true);
-        this.nonOpDefaultsProcessor = new DefaultsProcessor(this.plugin, false);
     }
 
     @Override
     public PermissionCalculator build(QueryOptions queryOptions, CacheMetadata metadata) {
         ImmutableList.Builder<PermissionProcessor> processors = ImmutableList.builder();
 
-        processors.add(new MapProcessor());
+        processors.add(new DirectProcessor());
 
         if (this.plugin.getConfiguration().get(ConfigKeys.APPLY_BUKKIT_CHILD_PERMISSIONS)) {
             processors.add(new ChildProcessor(this.plugin));
@@ -79,7 +73,8 @@ public class BukkitCalculatorFactory implements CalculatorFactory {
 
         boolean op = queryOptions.option(BukkitContextManager.OP_OPTION).orElse(false);
         if (metadata.getHolderType() == HolderType.USER && this.plugin.getConfiguration().get(ConfigKeys.APPLY_BUKKIT_DEFAULT_PERMISSIONS)) {
-            processors.add(op ? this.opDefaultsProcessor : this.nonOpDefaultsProcessor);
+            boolean overrideWildcards = this.plugin.getConfiguration().get(ConfigKeys.APPLY_DEFAULT_NEGATIONS_BEFORE_WILDCARDS);
+            processors.add(new DefaultsProcessor(this.plugin, overrideWildcards, op));
         }
 
         if (op) {
