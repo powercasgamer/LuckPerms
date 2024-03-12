@@ -51,8 +51,9 @@ public class EnvironmentVariableConfigAdapter extends StringBasedConfigurationAd
 
         String value = System.getenv(key);
         if (value != null) {
-            String printableValue = ConfigKeys.shouldCensorValue(path) ? "*****" : value;
-            this.plugin.getLogger().info(String.format("Resolved configuration value from environment variable: %s = %s", key, printableValue));
+            String printableValue = ConfigKeys.shouldCensorValue(key.toLowerCase(Locale.ROOT)) ? "*****" : value;
+            this.plugin.getLogger().warn("Path: " +  path + " Key: " + key + " Value: " + value + " Printable: " + printableValue);
+            this.plugin.getLogger().info(String.format("TESTResolved configuration value from environment variable: %s = %s", key, printableValue));
         }
         return value;
     }
