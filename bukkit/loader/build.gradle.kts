@@ -48,6 +48,10 @@ tasks {
             systemProperty("terminal.jline", false)
             systemProperty("terminal.ansi", true)
             environment("LUCKPERMS_DATA_MONGODB_CONNECTION_URI", "mongodb://localhost:27017")
+            environment("LUCKPERMS_REDIS_ADDRESS", "mongodb://localhost:27017")
+            environment("LUCKPERMS_REDIS_PASSWORD", "mongodb://localhost:27017")
+            environment("LUCKPERMS_NATS_PASSWORD", "mongodb://localhost:27017")
+            systemProperty("luckperms.redis.password", "mongodb://localhost:27017")
             args("-p", "25518")
         }
 }
